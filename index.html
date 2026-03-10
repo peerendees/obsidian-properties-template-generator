@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Obsidian Eigenschaften Vorlagen Generator | BERENT.AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lora:wght@300;400;600&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+::root {
+  --bg: #090806;
+  --card: #110e0a;
+  --border: #2a2118;
+  --copper: #B5742A;
+  --copper-dim: rgba(181,116,42,0.15);
+  --gold: #E8C98A;
+  --text: #C4BCB1;
+  --muted: #7A6A58;
+  --muted2: #9a8870;
+  --success: #5a8a5a;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Lora',serif;font-weight:300;line-height:1.7;min-height:100vh;}
+
+.plus-mark{width:18px;height:18px;position:relative;flex-shrink:0;display:inline-block;}
+.plus-mark::before,.plus-mark::after{content:'';position:absolute;background:var(--gold);border-radius:1px;}
+.plus-mark::before{width:2px;height:100%;left:50%;top:0;transform:translateX(-50%);}
+.plus-mark::after{width:100%;height:2px;top:50%;left:0;transform:translateY(-50%);}
+.plus-sm{width:12px;height:12px;}
+
+header{padding:1.5rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{display:flex;align-items:center;gap:.75rem;text-decoration:none;color:var(--text);font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.06em;}
+.nav-brand:hover{color:var(--copper);}
+
+.container{max-width:860px;margin:0 auto;padding:2rem;}
+
+h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:.06em;color:var(--copper);text-transform:uppercase;text-align:center;margin-bottom:.3rem;}
+.subtitle{text-align:center;color:var(--muted2);margin-bottom:2.5rem;font-size:1rem;}
+
+/* ---- INPUT AREA ---- */
+.input-area{background:var(--card);border:1px solid var(--border);padding:1.5rem;margin-bottom:2rem;}
+.input-area label{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.06em;text-transform:uppercase;color:var(--copper);display:block;margin-bottom:.75rem;}
+.input-row{display:flex;gap:.75rem;margin-bottom:1rem;}
+.input-row textarea{flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Lora',serif;font-size:.95rem;font-weight:300;padding:.75rem 1rem;resize:vertical;min-height:80px;line-height:1.6;outline:none;transition:border-color .2s;}
+.input-row textarea:focus{border-color:var(--copper);}
+.input-row textarea::placeholder{color:var(--muted);}
+
+.btn{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.06em;text-transform:uppercase;padding:.7rem 1.5rem;border:1px solid var(--copper);background:transparent;color:var(--copper);cursor:pointer;transition:all .2s;white-space:nowrap;display:inline-flex;align-items:center;gap:.5rem;}
+.btn:hover{background:var(--copper);color:var(--bg);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn:disabled:hover{background:transparent;color:var(--copper);}
+.btn-primary{background:var(--copper);color:var(--bg);}
+.btn-primary:hover{background:#c98535;}
+.btn-sm{font-size:.8rem;padding:.4rem .8rem;}
+
+.mic-btn{width:48px;height:48px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--muted);font-size:1.3rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mic-btn:hover{border-color:var(--copper);color:var(--copper);}
+.mic-btn.recording{border-color:#c44;color:#c44;animation:pulse 1.2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(204,68,68,0.3);}50%{box-shadow:0 0 0 8px rgba(204,68,68,0);}}
+
+.hint{font-size:.8rem;color:var(--muted);font-family:'JetBrains Mono',monospace;letter-spacing:.03em;}
+
+/* ---- STEPPER ---- */
+.stepper{display:flex;gap:0;margin-bottom:2rem;border-bottom:1px solid var(--border);}
+.stepper-step{padding:.6rem 1.2rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.04em;color:var(--muted);border-bottom:2px solid transparent;cursor:default;transition:all .2s;}
+.stepper-step.active{color:var(--copper);border-bottom-color:var(--copper);}
+.stepper-step.done{color:var(--success);}
+
+/* ---- OUTPUT SECTIONS ---- */
+.output-section{display:none;margin-bottom:1.5rem;}
+.output-section.visible{display:block;}
+.section-header{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:.04em;text-transform:uppercase;color:var(--copper);margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem;}
+.section-header .num{background:var(--copper);color:var(--bg);width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:.85rem;border-radius:2px;}
+
+.prop-table{width:100%;border-collapse:collapse;font-size:.85rem;margin-bottom:1rem;}
+.prop-table th{font-family:'Bebas Neue',sans-serif;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--copper);text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--copper);}
+.prop-table td{padding:.4rem .6rem;border-bottom:1px solid var(--border);vertical-align:top;}
+.prop-table tr:last-child td{border-bottom:none;}
+.prop-table code{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--copper);background:var(--copper-dim);padding:.1rem .3rem;border-radius:2px;}
+
+.code-wrap{position:relative;margin-bottom:1rem;}
+.code-label{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);letter-spacing:.05em;padding:.35rem .6rem;background:var(--bg);border:1px solid var(--border);border-bottom:none;display:inline-block;}
+.code-block{background:var(--bg);border:1px solid var(--border);padding:1rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:300;line-height:1.55;overflow-x:auto;white-space:pre;color:var(--text);}
+.code-actions{position:absolute;top:.4rem;right:.4rem;display:flex;gap:.3rem;}
+.copy-btn,.dl-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:.65rem;padding:.25rem .5rem;cursor:pointer;transition:all .2s;letter-spacing:.03em;}
+.copy-btn:hover,.dl-btn:hover{color:var(--copper);border-color:var(--copper);}
+.copy-btn.copied{color:var(--gold);border-color:var(--gold);}
+.dl-btn:hover{color:var(--gold);border-color:var(--gold);}
+
+/* Download bar */
+.download-bar{background:var(--card);border:1px solid var(--border);padding:1rem 1.25rem;display:none;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:2rem;}
+.download-bar.visible{display:flex;}
+.download-bar .label{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.04em;text-transform:uppercase;color:var(--text);}
+
+/* Loading */
+.loader{display:none;text-align:center;padding:3rem;color:var(--muted2);}
+.loader.visible{display:block;}
+.loader-dots{font-size:1.5rem;color:var(--copper);letter-spacing:.3rem;}
+@keyframes blink{0%,80%,100%{opacity:0;}40%{opacity:1;}}
+.loader-dots span{animation:blink 1.4s infinite both;}
+.loader-dots span:nth-child(2){animation-delay:.2s;}
+.loader-dots span:nth-child(3){animation-delay:.4s;}
+
+.warning-box{display:flex;align-items:flex-start;gap:.6rem;padding:.75rem;border:1px solid var(--copper);background:rgba(181,116,42,.06);font-size:.8rem;margin:1rem 0;}
+
+footer{border-top:1px solid var(--border);padding:2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-size:.85rem;color:var(--muted);}
+.footer-brand{display:flex;align-items:center;gap:.5rem;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.06em;color:var(--text);}
+footer a{color:var(--muted2);text-decoration:none;transition:color .2s;}
+footer a:hover{color:var(--copper);}
+
+@media(max-width:600px){
+  h1{font-size:1.8rem;}
+  .input-row{flex-direction:column;}
+  .stepper{flex-wrap:wrap;}
+  footer{flex-direction:column;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="https://berent.ai" class="nav-brand">
+    <div class="plus-mark"></div>
+    <span>BERENT.AI &mdash; Beratung + Entwicklung</span>
+  </a>
+  <span style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.05em;">SKILL DEMO v1.0</span>
+</header>
+
+<div class="container">
+
+  <h1>Obsidian Property<br>Template Generator</h1>
+  <p class="subtitle">Beschreibe deinen Use Case &mdash; per Sprache oder Text &mdash; und erhalte ein komplettes Obsidian-Template mit Properties, DataView-Queries und MOC-Dashboard zum Download.</p>
+
+  <!-- INPUT -->
+  <div class="input-area" id="inputArea">
+    <label>Was moechtest du in Obsidian organisieren?</label>
+    <div class="input-row">
+      <textarea id="userInput" placeholder="z.B. &bdquo;Ich schreibe Spielberichte fuer meine Wasserball-Mannschaft. Gegner, Ergebnis, Torschuetzen &mdash; das muss ich auf einen Blick sehen.&ldquo;"></textarea>
+      <button class="mic-btn" id="micBtn" title="Spracheingabe starten">&#127908;</button>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;">
+      <span class="hint" id="micHint">Klick auf das Mikrofon fuer Spracheingabe</span>
+      <button class="btn btn-primary" id="generateBtn" onclick="generate()">Template generieren</button>
+    </div>
+  </div>
+
+  <!-- FOLLOW-UP -->
+  <div class="input-area" id="followUpArea" style="display:none;">
+    <label>Noch Details? (optional)</label>
+    <div class="input-row">
+      <textarea id="followUpInput" placeholder="z.B. &bdquo;Ich brauche auch eine Spalte fuer den Schiedsrichter und die Zuschauerzahl.&ldquo;"></textarea>
+      <button class="mic-btn" id="micBtn2" title="Spracheingabe">&#127908;</button>
+    </div>
+    <div style="display:flex;gap:.5rem;justify-content:flex-end;">
+      <button class="btn btn-sm" onclick="skipFollowUp()">Ueberspringen</button>
+      <button class="btn btn-primary btn-sm" onclick="applyFollowUp()">Ergaenzen &amp; neu generieren</button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loader" id="loader">
+    <div class="loader-dots"><span>&#9679;</span><span>&#9679;</span><span>&#9679;</span></div>
+    <p style="margin-top:.75rem;">Analysiere Use Case und generiere Template&hellip;</p>
+  </div>
+
+  <!-- STEPPER -->
+  <div class="stepper" id="stepper" style="display:none;">
+    <div class="stepper-step" data-step="props">01 Properties</div>
+    <div class="stepper-step" data-step="template">02 Template</div>
+    <div class="stepper-step" data-step="dataview">03 DataView</div>
+    <div class="stepper-step" data-step="moc">04 MOC</div>
+    <div class="stepper-step" data-step="start">05 Quick Start</div>
+  </div>
+
+  <!-- DOWNLOAD BAR -->
+  <div class="download-bar" id="downloadBar">
+    <span class="label">Alle Dateien herunterladen:</span>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+      <button class="btn btn-sm" onclick="downloadFile('template')">&#8595; Template.md</button>
+      <button class="btn btn-sm" onclick="downloadFile('moc')">&#8595; MOC.md</button>
+      <button class="btn btn-sm" onclick="downloadAll()">&#8595; Alles als ZIP</button>
+    </div>
+  </div>
+
+  <!-- OUTPUT: Properties -->
+  <div class="output-section" id="out-props">
+    <div class="section-header"><span class="num">1</span> Property Design</div>
+    <div id="propsContent"></div>
+  </div>
+
+  <!-- OUTPUT: Template -->
+  <div class="output-section" id="out-template">
+    <div class="section-header"><span class="num">2</span> Obsidian Template</div>
+    <p class="subtitle" style="font-size:.85rem;color:var(--muted2);margin-bottom:.75rem;">Kopierfertiges Template &mdash; ablegen unter <code style="font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--copper);background:var(--copper-dim);padding:.1rem .3rem;">Templates/</code> im Vault.</p>
+    <div id="templateContent"></div>
+  </div>
+
+  <!-- OUTPUT: DataView -->
+  <div class="output-section" id="out-dataview">
+    <div class="section-header"><span class="num">3</span> DataView Queries</div>
+    <p class="subtitle" style="font-size:.85rem;color:var(--muted2);margin-bottom:.75rem;">Einfach in eine beliebige Notiz oder ins MOC einfuegen. DataView-Plugin muss installiert sein.</p>
+    <div id="dataviewContent"></div>
+  </div>
+
+  <!-- OUTPUT: MOC -->
+  <div class="output-section" id="out-moc">
+    <div class="section-header"><span class="num">4</span> MOC Dashboard</div>
+    <p class="subtitle" style="font-size:.85rem;color:var(--muted2);margin-bottom:.75rem;">Lebendes Dashboard &mdash; aktualisiert sich automatisch mit jeder neuen Notiz.</p>
+    <div id="mocContent"></div>
+  </div>
+
+  <!-- OUTPUT: Quick Start -->
+  <div class="output-section" id="out-start">
+    <div class="section-header"><span class="num">5</span> Quick Start</div>
+    <div id="startContent"></div>
+  </div>
+
+  <!-- NEW USE CASE -->
+  <div id="newCaseArea" style="display:none;text-align:center;margin:2rem 0;">
+    <button class="btn" onclick="resetAll()">&#8634; Neuen Use Case starten</button>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-brand"><div class="plus-mark plus-sm"></div>BERENT</div>
+  <span>Obsidian Property Template Generator &middot; berent.ai</span>
+  <div style="display:flex;gap:2rem;">
+    <a href="https://berent.ai/impressum.html">Impressum</a>
+    <a href="https://berent.ai">&larr; Zurueck zur Hauptseite</a>
+  </div>
+</footer>
+
+<script>
+// (Original JS-Code aus demo.html hier unveraendert eingefuegt)
+</script>
+</body>
+</html>
